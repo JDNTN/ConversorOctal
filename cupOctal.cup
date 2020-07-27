@@ -1,0 +1,39 @@
+package Analizadores;
+
+import java_cup.runtime.Symbol;
+
+
+parser code {:
+	// Connect this parser to a scanner!
+	
+	int nivel = 1;
+	
+	public OctalParser(EntradaLexico lex) {
+		super(lex);
+	}	
+
+	public void syntax_error(Symbol symbol) {
+		Menu.reportarErrores("error en: Linea: " + symbol.left + " Columna: " + symbol.right + " Token: " + GSym.terminalNames[symbol.sym]);
+	}	   	 
+:}
+
+/* Terminals (tokens returned by the scanner). */
+terminal String		NUMERO;
+
+/* Non-terminals */
+non terminal Integer 	        s,num;
+ 
+
+
+
+/* The grammar */
+
+//Acciones
+
+s::= 	num:val {:GUI.ConversorOctal.cambiarResultado(val);:}
+	;
+
+num::=  NUMERO:numero num:suma {:nivel++; RESULT = Manejador.obtenerValor(Integer.valueOf(numero), nivel, suma);:}
+	|NUMERO:numero 	{:RESULT = Integer.valueOf(numero);:}
+	|error
+	;
